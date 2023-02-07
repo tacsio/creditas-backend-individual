@@ -1,4 +1,4 @@
-package challenge.model
+package challenge.core
 
 import java.util.*
 
@@ -9,13 +9,15 @@ class Address
 class Customer
 
 class Order(val customer: Customer, val address: Address) {
+    private val paymentProcessor = PaymentProcessor()
+
     private val items = mutableListOf<OrderItem>()
     var closedAt: Date? = null
         private set
     var payment: Payment? = null
         private set
     val totalAmount
-        get() = items.sumByDouble { it.total }
+        get() = items.sumOf { it.total }
 
     fun addProduct(product: Product, quantity: Int) {
         var productAlreadyAdded = items.any { it.product == product }
@@ -29,23 +31,24 @@ class Order(val customer: Customer, val address: Address) {
         if (payment != null)
             throw Exception("The order has already been paid!")
 
-        if (items.count() == 0)
+        if (items.isEmpty())
             throw Exception("Empty order can not be paid!")
 
         payment = Payment(this, method)
 
-        process(payment!!)
+        paymentProcessor.handlePayment(payment!!)
 
         close()
-    }
-
-    private fun process(payment: Payment) {
-        TODO("Not yet implemented")
     }
 
     private fun close() {
         closedAt = Date()
     }
+
+    fun orderItems(): List<OrderItem> {
+        return items.toList()
+    }
+
 }
 
 enum class ProductType {

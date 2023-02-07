@@ -1,6 +1,7 @@
 package challenge
 
-import challenge.model.*
+import challenge.core.*
+
 
 fun main(args: Array<String>) {
     val shirt = Product("Flowered t-shirt", ProductType.PHYSICAL, 35.00)
